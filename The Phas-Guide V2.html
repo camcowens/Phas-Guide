@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>PHASMOPHOBIA — Ghost ID & Equipment Compendium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0b0f;--bg2:#111318;--bg3:#181b22;--bg4:#1e222b;
+  --border:#1f2633;--border-h:#2a3345;
+  --ghost:#4ae0c1;--ghost-dim:#2a8a73;--ghost-glow:rgba(74,224,193,0.15);
+  --ecto:#7b5ea7;--ecto-dim:#5a3f82;
+  --blood:#c0392b;--blood-dim:#7a2419;
+  --emf:#f39c12;--spirit:#3498db;--orb:#9b59b6;--uv:#8e44ad;
+  --freeze:#5dade2;--dots:#2ecc71;--writing:#e67e22;
+  --warn:#e74c3c;--safe:#27ae60;
+  --text:#8899aa;--text-b:#c8d6e0;--text-d:#4a5568;--text-w:#e8ecf0;
+  --confirmed:#4ae0c1;--ruled-out:#e74c3c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;line-height:1.65;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 3px);}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:3px;}
+
+/* ══ HERO ══ */
+.hero{position:relative;min-height:340px;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#050608 0%,#0d0f14 60%,var(--bg) 100%);}
+.smoke-layer{position:absolute;inset:0;pointer-events:none;}
+.smoke-layer::before,.smoke-layer::after{content:'';position:absolute;border-radius:50%;filter:blur(60px);opacity:0;animation:smokeRise linear infinite;}
+.smoke-layer::before{width:300px;height:300px;background:radial-gradient(circle,rgba(74,224,193,0.12) 0%,transparent 70%);left:20%;bottom:-150px;animation-duration:8s;}
+.smoke-layer::after{width:400px;height:400px;background:radial-gradient(circle,rgba(123,94,167,0.1) 0%,transparent 70%);left:55%;bottom:-200px;animation-duration:11s;animation-delay:2s;}
+.smoke-layer.s2::before{width:250px;height:250px;background:radial-gradient(circle,rgba(200,200,220,0.06) 0%,transparent 70%);left:40%;bottom:-120px;animation-duration:9s;animation-delay:4s;}
+.smoke-layer.s2::after{width:350px;height:350px;background:radial-gradient(circle,rgba(74,224,193,0.08) 0%,transparent 70%);left:70%;bottom:-180px;animation-duration:13s;animation-delay:1s;}
+.smoke-layer.s3::before{width:200px;height:200px;background:radial-gradient(circle,rgba(123,94,167,0.07) 0%,transparent 70%);left:10%;bottom:-100px;animation-duration:10s;animation-delay:3s;}
+.smoke-layer.s3::after{width:500px;height:500px;background:radial-gradient(circle,rgba(200,214,224,0.04) 0%,transparent 70%);left:30%;bottom:-250px;animation-duration:15s;}
+@keyframes smokeRise{0%{transform:translateY(0) scale(1);opacity:0;}15%{opacity:.7;}50%{opacity:.4;}85%{opacity:.1;}100%{transform:translateY(-600px) scale(1.8);opacity:0;}}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(74,224,193,0.04) 0%,transparent 60%);animation:flicker 4s ease-in-out infinite alternate;pointer-events:none;}
+@keyframes flicker{0%,100%{opacity:1;}33%{opacity:.6;}66%{opacity:.85;}}
+.hero-title{font-family:'Creepster',cursive;font-size:clamp(40px,8vw,82px);color:var(--text-w);text-shadow:0 0 40px rgba(74,224,193,0.3),0 0 80px rgba(74,224,193,0.1);letter-spacing:6px;z-index:2;text-align:center;animation:titleIn 1.2s ease-out;}
+.hero-sub{font-family:'Special Elite',cursive;font-size:clamp(11px,2vw,15px);color:var(--ghost-dim);letter-spacing:8px;text-transform:uppercase;margin-top:10px;z-index:2;text-align:center;animation:titleIn 1.6s ease-out;}
+.hero-patch{font-family:'Fira Code',monospace;font-size:10px;color:var(--text-d);letter-spacing:3px;margin-top:18px;z-index:2;border:1px solid var(--border);padding:4px 14px;animation:titleIn 2s ease-out;}
+@keyframes titleIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+/* ══ NAV ══ */
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,11,15,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;gap:0;}
+.nav a{display:block;padding:13px 14px;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:2px;color:var(--text-d);text-decoration:none;text-transform:uppercase;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
+.nav a:hover,.nav a.active{color:var(--ghost);border-bottom-color:var(--ghost);}
+
+/* ══ LAYOUT ══ */
+.wrap{max-width:1300px;margin:0 auto;padding:24px 16px;}
+.section-hdr{display:flex;align-items:center;gap:12px;margin:44px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.section-hdr:first-child{margin-top:0;}
+.section-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);font-size:16px;flex-shrink:0;}
+.section-hdr h2{font-family:'Creepster',cursive;font-size:26px;color:var(--text-w);letter-spacing:3px;font-weight:400;}
+.section-hdr .cnt{font-family:'Fira Code',monospace;font-size:9px;color:var(--text-d);letter-spacing:2px;margin-left:auto;white-space:nowrap;}
+
+/* ══ EVENT BANNER ══ */
+.event-banner{background:linear-gradient(90deg,rgba(74,224,193,0.06),rgba(123,94,167,0.06));border:1px solid var(--border);padding:16px 20px;margin-bottom:20px;}
+.event-banner h3{font-family:'Creepster',cursive;font-size:17px;color:var(--ghost);letter-spacing:2px;font-weight:400;margin-bottom:6px;}
+.event-banner p{font-size:12px;color:var(--text);line-height:1.7;}
+
+/* ══ DIFFICULTY ══ */
+.diff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:20px;}
+.diff-card{background:var(--bg2);border:1px solid var(--border);padding:16px;text-align:center;border-top:3px solid var(--border);}
+.diff-card.d-am{border-top-color:var(--safe);}.diff-card.d-in{border-top-color:var(--emf);}.diff-card.d-pr{border-top-color:var(--blood);}.diff-card.d-ni{border-top-color:var(--ecto);}.diff-card.d-is{border-top-color:#ff0040;}
+.diff-name{font-family:'Creepster',cursive;font-size:17px;color:var(--text-w);letter-spacing:2px;margin-bottom:4px;}
+.diff-ev{font-family:'Fira Code',monospace;font-size:20px;color:var(--ghost);}
+.diff-lbl{font-size:9px;color:var(--text-d);letter-spacing:2px;margin-top:2px;}
+.diff-san{font-size:11px;color:var(--text);margin-top:6px;}
+
+/* ═══════════════════════════════════════════════
+   GHOST ELIMINATION JOURNAL — THE MAIN FEATURE
+   ═══════════════════════════════════════════════ */
+.journal{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--ghost-dim);padding:20px;margin-bottom:24px;position:relative;overflow:hidden;}
+.journal::before{content:'';position:absolute;top:0;right:0;width:300px;height:100%;background:radial-gradient(ellipse at 80% 20%,rgba(74,224,193,0.04) 0%,transparent 70%);pointer-events:none;}
+.journal h3{font-family:'Creepster',cursive;font-size:22px;color:var(--ghost);letter-spacing:2px;font-weight:400;margin-bottom:4px;}
+.journal-sub{font-size:11px;color:var(--text-d);margin-bottom:16px;font-family:'Fira Code',monospace;letter-spacing:1px;}
+.journal-instructions{font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.7;padding:10px 14px;background:rgba(74,224,193,0.04);border-left:2px solid var(--ghost-dim);}
+.journal-instructions span.g{color:var(--confirmed);font-weight:600;}
+.journal-instructions span.r{color:var(--ruled-out);font-weight:600;}
+
+/* Evidence selector buttons */
+.ev-selectors{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.ev-sel{
+  font-family:'Fira Code',monospace;font-size:11px;letter-spacing:1px;
+  padding:10px 16px;cursor:pointer;border:2px solid var(--border);
+  background:var(--bg3);color:var(--text-d);
+  transition:all .2s;user-select:none;-webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;min-width:80px;text-align:center;
+}
+.ev-sel[data-state="confirmed"]{border-color:var(--confirmed);color:var(--confirmed);background:rgba(74,224,193,0.08);box-shadow:0 0 12px rgba(74,224,193,0.15);}
+.ev-sel[data-state="ruled-out"]{border-color:var(--ruled-out);color:var(--ruled-out);background:rgba(231,76,60,0.08);text-decoration:line-through;}
+.ev-sel::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:0;height:2px;transition:all .2s;}
+.ev-sel[data-state="confirmed"]::after{width:60%;background:var(--confirmed);}
+.ev-sel[data-state="ruled-out"]::after{width:60%;background:var(--ruled-out);}
+
+/* Results area */
+.journal-results{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.journal-results .jr-count{font-family:'Fira Code',monospace;font-size:12px;color:var(--ghost);letter-spacing:1px;}
+.journal-reset{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:2px;background:transparent;border:1px solid var(--border);color:var(--text-d);padding:6px 14px;cursor:pointer;transition:all .15s;}
+.journal-reset:hover{border-color:var(--warn);color:var(--warn);}
+
+/* Ghost list in journal */
+.journal-ghosts{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;}
+.jg{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:var(--bg3);border:1px solid var(--border);
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.jg.eliminated{opacity:0.25;border-color:transparent;}
+.jg.eliminated .jg-name{text-decoration:line-through;color:var(--text-d);}
+.jg.match{border-color:var(--ghost-dim);background:rgba(74,224,193,0.05);}
+.jg.match .jg-name{color:var(--text-w);}
+.jg-name{font-family:'Outfit',sans-serif;font-weight:600;font-size:13px;color:var(--text-b);transition:all .3s;flex-shrink:0;min-width:100px;}
+.jg-evs{display:flex;gap:3px;flex-wrap:wrap;}
+.jg-ev{font-family:'Fira Code',monospace;font-size:7px;letter-spacing:1px;padding:2px 5px;border:1px solid var(--border);color:var(--text-d);transition:all .3s;white-space:nowrap;}
+.jg-ev.ev-match{border-color:var(--confirmed);color:var(--confirmed);}
+.jg-ev.ev-miss{border-color:transparent;color:var(--text-d);opacity:0.4;}
+
+/* ══ EVIDENCE MATRIX ══ */
+.matrix-wrap{overflow-x:auto;margin-bottom:24px;-webkit-overflow-scrolling:touch;}
+.matrix{width:100%;border-collapse:collapse;font-size:11px;min-width:600px;}
+.matrix th{position:sticky;top:0;z-index:2;background:var(--bg2);font-family:'Fira Code',monospace;font-size:8px;letter-spacing:2px;color:var(--text-d);text-transform:uppercase;padding:8px 6px;border-bottom:2px solid var(--border);text-align:center;white-space:nowrap;}
+.matrix th:first-child{text-align:left;min-width:110px;}
+.matrix td{padding:6px;border-bottom:1px solid rgba(31,38,51,0.5);text-align:center;vertical-align:middle;}
+.matrix td:first-child{text-align:left;color:var(--text-b);font-weight:600;font-size:12px;white-space:nowrap;}
+.matrix tr:hover{background:rgba(74,224,193,0.03);}
+.ev-dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--ghost);opacity:0.85;box-shadow:0 0 6px rgba(74,224,193,0.3);}
+.ev-dot.orb-x{background:var(--ecto);box-shadow:0 0 6px rgba(123,94,167,0.4);}
+
+/* ══ GHOST CARDS ══ */
+.ghost-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;}
+.ghost-card{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--ghost-dim);position:relative;overflow:hidden;transition:border-color .25s,box-shadow .25s;}
+.ghost-card:hover{border-color:var(--border-h);box-shadow:0 0 30px rgba(74,224,193,0.05);}
+.gc-hd{padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.gc-name{font-family:'Creepster',cursive;font-size:20px;color:var(--text-w);letter-spacing:2px;}
+.gc-pills{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;max-width:200px;}
+.ep{font-family:'Fira Code',monospace;font-size:7px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--border);white-space:nowrap;}
+.ep.e-emf{border-color:var(--emf);color:var(--emf);}.ep.e-sb{border-color:var(--spirit);color:var(--spirit);}.ep.e-orb{border-color:var(--orb);color:var(--orb);}.ep.e-uv{border-color:var(--uv);color:var(--uv);}.ep.e-freeze{border-color:var(--freeze);color:var(--freeze);}.ep.e-dots{border-color:var(--dots);color:var(--dots);}.ep.e-writing{border-color:var(--writing);color:var(--writing);}
+.gc-body{padding:0 16px 14px;font-size:12px;line-height:1.7;}
+.gc-body h4{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:3px;color:var(--ghost);text-transform:uppercase;margin:10px 0 4px;}
+.gc-body h4:first-child{margin-top:0;}
+.gc-body p{color:var(--text);margin-bottom:4px;}
+.gc-tip{background:rgba(74,224,193,0.06);border-left:2px solid var(--ghost-dim);padding:5px 10px;margin:6px 0;font-size:11px;color:var(--text-b);}
+.gc-warn{background:rgba(231,76,60,0.06);border-left:2px solid var(--blood-dim);padding:5px 10px;margin:6px 0;font-size:11px;color:var(--text);}
+
+/* ══ FILTER BAR ══ */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;}
+.filter-bar input{flex:1;min-width:180px;background:var(--bg3);border:1px solid var(--border);color:var(--text-b);padding:10px 12px;font-family:'Fira Code',monospace;font-size:11px;outline:none;transition:border-color .2s;}
+.filter-bar input:focus{border-color:var(--ghost);}
+.filter-bar input::placeholder{color:var(--text-d);}
+.fb{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:1px;background:transparent;border:1px solid var(--border);color:var(--text-d);padding:8px 10px;cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.fb.active{border-color:var(--ghost);color:var(--ghost);}
+.fb:hover{border-color:var(--ghost-dim);color:var(--ghost-dim);}
+
+/* ══ EQUIPMENT ══ */
+.eq-list{display:grid;gap:10px;}
+.eq-item{background:var(--bg2);border:1px solid var(--border);padding:14px 16px;display:grid;grid-template-columns:1fr;gap:4px;}
+.eq-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.eq-name{color:var(--text-w);font-weight:600;font-size:14px;}
+.eq-cat{font-family:'Fira Code',monospace;font-size:7px;letter-spacing:2px;padding:2px 7px;display:inline-block;}
+.eq-cat.c-evidence{border:1px solid var(--ghost-dim);color:var(--ghost-dim);}
+.eq-cat.c-protect{border:1px solid var(--safe);color:var(--safe);}
+.eq-cat.c-track{border:1px solid var(--spirit);color:var(--spirit);}
+.eq-cat.c-media{border:1px solid var(--orb);color:var(--orb);}
+.eq-cat.c-util{border:1px solid var(--text-d);color:var(--text-d);}
+.eq-cost{font-family:'Fira Code',monospace;font-size:11px;color:var(--emf);}
+.eq-max{font-family:'Fira Code',monospace;font-size:10px;color:var(--text-d);}
+.eq-notes{font-size:12px;color:var(--text);line-height:1.6;}
+
+/* ══ TIPS ══ */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+.tip-card{background:var(--bg2);border:1px solid var(--border);padding:16px 18px;border-left:3px solid var(--ecto-dim);transition:border-color .2s;}
+.tip-card:hover{border-left-color:var(--ecto);}
+.tip-card h4{font-family:'Creepster',cursive;font-size:15px;color:var(--text-w);letter-spacing:1px;margin-bottom:6px;font-weight:400;}
+.tip-card p{font-size:12px;color:var(--text);line-height:1.7;}
+
+/* ══ FOOTER ══ */
+.footer{text-align:center;padding:36px 16px;border-top:1px solid var(--border);margin-top:36px;}
+.footer p{font-family:'Special Elite',cursive;font-size:11px;color:var(--text-d);letter-spacing:3px;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  .ghost-grid{grid-template-columns:1fr;}
+  .tips-grid{grid-template-columns:1fr;}
+  .diff-grid{grid-template-columns:repeat(2,1fr);}
+  .nav a{padding:12px 10px;font-size:8px;letter-spacing:1px;}
+  .journal-ghosts{grid-template-columns:1fr;}
+  .ev-selectors{gap:6px;}
+  .ev-sel{padding:8px 10px;font-size:10px;min-width:60px;}
+  .wrap{padding:20px 12px;}
+}
+@media(max-width:480px){
+  .diff-grid{grid-template-columns:1fr;}
+  .gc-hd{flex-direction:column;}
+  .gc-pills{justify-content:flex-start;max-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="smoke-layer"></div>
+  <div class="smoke-layer s2"></div>
+  <div class="smoke-layer s3"></div>
+  <div class="hero-title">Phasmophobia</div>
+  <div class="hero-sub">Ghost Identification & Equipment Compendium</div>
+  <div class="hero-patch">v0.16.1.0 · Cursed Hollow · April 2026</div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="#event">Event</a>
+    <a href="#journal">Journal</a>
+    <a href="#difficulty">Difficulty</a>
+    <a href="#evidence">Matrix</a>
+    <a href="#ghosts">Ghosts</a>
+    <a href="#equipment">Equipment</a>
+    <a href="#tips">Tips</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══ EVENT ═══ -->
+<div id="event" class="event-banner">
+  <h3>🌿 Cursed Hollow 2026 — LIVE NOW</h3>
+  <p>Mar 31 – Apr 21 · Double XP through Apr 7 · First-ever cosmetic rewards (Forest Spirit Mask, Pathfinder ID Card & Badge). Find Forest Minions on rotating event maps — lucky minions decrease ghost speed by 10% (stackable), unlucky ones increase it. Cosmetics unlock at the upcoming Player Character Update. Minimum x1.00 difficulty required for event points.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     GHOST ELIMINATION JOURNAL
+     ═══════════════════════════════════════════════ -->
+<div class="section-hdr" id="journal">
+  <div class="section-icon">📓</div>
+  <h2>Ghost Journal</h2>
+  <span class="cnt">ELIMINATION TOOL</span>
+</div>
+
+<div class="journal">
+  <h3>Evidence Elimination</h3>
+  <div class="journal-sub">TAP EVIDENCE TO NARROW SUSPECTS</div>
+  <div class="journal-instructions">
+    <b>Tap once</b> = <span class="g">Confirmed</span> (you found this evidence)<br>
+    <b>Tap twice</b> = <span class="r">Ruled Out</span> (confirmed this evidence is NOT present)<br>
+    <b>Tap three times</b> = Reset to unknown
+  </div>
+
+  <div class="ev-selectors">
+    <div class="ev-sel" data-ev="EMF 5" data-state="none" onclick="cycleEv(this)">EMF 5</div>
+    <div class="ev-sel" data-ev="Spirit Box" data-state="none" onclick="cycleEv(this)">Spirit Box</div>
+    <div class="ev-sel" data-ev="Ghost Writing" data-state="none" onclick="cycleEv(this)">Writing</div>
+    <div class="ev-sel" data-ev="Ultraviolet" data-state="none" onclick="cycleEv(this)">UV</div>
+    <div class="ev-sel" data-ev="Freezing" data-state="none" onclick="cycleEv(this)">Freezing</div>
+    <div class="ev-sel" data-ev="Ghost Orb" data-state="none" onclick="cycleEv(this)">Ghost Orb</div>
+    <div class="ev-sel" data-ev="D.O.T.S" data-state="none" onclick="cycleEv(this)">D.O.T.S</div>
+  </div>
+
+  <div class="journal-results">
+    <span class="jr-count" id="jrCount">27 / 27 possible</span>
+    <button class="journal-reset" onclick="resetJournal()">RESET ALL</button>
+  </div>
+
+  <div class="journal-ghosts" id="journalGhosts">
+    <!-- Static ghost entries — all 27 baked in -->
+    <div class="jg match" data-evidence="D.O.T.S,Ghost Orb,Ultraviolet"><span class="jg-name">Banshee</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">ORB</span><span class="jg-ev">UV</span></div></div>
+    <div class="jg match" data-evidence="EMF 5,Ghost Orb,Spirit Box"><span class="jg-name">Dayan</span><div class="jg-evs"><span class="jg-ev">EMF5</span><span class="jg-ev">ORB</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Ultraviolet,Freezing"><span class="jg-name">Demon</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">UV</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,Ghost Writing,Spirit Box"><span class="jg-name">Deogen</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">WRT</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="EMF 5,Ultraviolet,Spirit Box"><span class="jg-name">Gallu</span><div class="jg-evs"><span class="jg-ev">EMF5</span><span class="jg-ev">UV</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,EMF 5,Ultraviolet"><span class="jg-name">Goryo</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">EMF5</span><span class="jg-ev">UV</span></div></div>
+    <div class="jg match" data-evidence="Ghost Orb,Ultraviolet,Freezing"><span class="jg-name">Hantu</span><div class="jg-evs"><span class="jg-ev">ORB</span><span class="jg-ev">UV</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="EMF 5,Ultraviolet,Freezing"><span class="jg-name">Jinn</span><div class="jg-evs"><span class="jg-ev">EMF5</span><span class="jg-ev">UV</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Ghost Orb,Spirit Box"><span class="jg-name">Mare</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">ORB</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Freezing,Spirit Box"><span class="jg-name">Moroi</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">FRZ</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,EMF 5,Ultraviolet"><span class="jg-name">Myling</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">EMF5</span><span class="jg-ev">UV</span></div></div>
+    <div class="jg match" data-evidence="EMF 5,Ghost Orb,Ultraviolet"><span class="jg-name">Obake</span><div class="jg-evs"><span class="jg-ev">EMF5</span><span class="jg-ev">ORB</span><span class="jg-ev">UV</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Ultraviolet,D.O.T.S"><span class="jg-name">Obambo</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">UV</span><span class="jg-ev">DOTS</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,EMF 5,Freezing"><span class="jg-name">Oni</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">EMF5</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="Ghost Orb,Freezing,Spirit Box"><span class="jg-name">Onryo</span><div class="jg-evs"><span class="jg-ev">ORB</span><span class="jg-ev">FRZ</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,Ultraviolet,Spirit Box"><span class="jg-name">Phantom</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">UV</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Ultraviolet,Spirit Box"><span class="jg-name">Poltergeist</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">UV</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,EMF 5,Ghost Orb"><span class="jg-name">Raiju</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">EMF5</span><span class="jg-ev">ORB</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,Ghost Orb,Freezing"><span class="jg-name">Revenant</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">ORB</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,EMF 5,Freezing"><span class="jg-name">Shade</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">EMF5</span><span class="jg-ev">FRZ</span></div></div>
+    <div class="jg match" data-evidence="Ghost Writing,EMF 5,Spirit Box"><span class="jg-name">Spirit</span><div class="jg-evs"><span class="jg-ev">WRT</span><span class="jg-ev">EMF5</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,Ghost Writing,Ghost Orb"><span class="jg-name">Thaye</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">WRT</span><span class="jg-ev">ORB</span></div></div>
+    <div class="jg match" data-evidence="Ultraviolet,Freezing,Spirit Box" data-extra="Ghost Orb"><span class="jg-name">The Mimic</span><div class="jg-evs"><span class="jg-ev">UV</span><span class="jg-ev">FRZ</span><span class="jg-ev">SB</span><span class="jg-ev" style="border-color:var(--ecto);color:var(--ecto);opacity:0.6">+ORB</span></div></div>
+    <div class="jg match" data-evidence="EMF 5,Freezing,Spirit Box"><span class="jg-name">The Twins</span><div class="jg-evs"><span class="jg-ev">EMF5</span><span class="jg-ev">FRZ</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,EMF 5,Spirit Box"><span class="jg-name">Wraith</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">EMF5</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,Ghost Orb,Spirit Box"><span class="jg-name">Yokai</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">ORB</span><span class="jg-ev">SB</span></div></div>
+    <div class="jg match" data-evidence="D.O.T.S,Ghost Orb,Freezing"><span class="jg-name">Yurei</span><div class="jg-evs"><span class="jg-ev">DOTS</span><span class="jg-ev">ORB</span><span class="jg-ev">FRZ</span></div></div>
+  </div>
+</div>
+
+<!-- ═══ DIFFICULTY ═══ -->
+<div class="section-hdr" id="difficulty">
+  <div class="section-icon">⚙</div>
+  <h2>Difficulty & Evidence</h2>
+</div>
+<div class="diff-grid">
+  <div class="diff-card d-am"><div class="diff-name">Amateur</div><div class="diff-ev">3</div><div class="diff-lbl">EVIDENCES</div><div class="diff-san">Meds restore 40%</div></div>
+  <div class="diff-card d-in"><div class="diff-name">Intermediate</div><div class="diff-ev">3</div><div class="diff-lbl">EVIDENCES</div><div class="diff-san">Meds restore 35%</div></div>
+  <div class="diff-card d-pr"><div class="diff-name">Professional</div><div class="diff-ev">3</div><div class="diff-lbl">EVIDENCES</div><div class="diff-san">Meds restore 30%</div></div>
+  <div class="diff-card d-ni"><div class="diff-name">Nightmare</div><div class="diff-ev">2</div><div class="diff-lbl">EVIDENCES</div><div class="diff-san">Meds restore 25% · 1 hidden</div></div>
+  <div class="diff-card d-is"><div class="diff-name">Insanity</div><div class="diff-ev">1</div><div class="diff-lbl">EVIDENCE</div><div class="diff-san">Meds restore 20% · 2 hidden</div></div>
+</div>
+
+<!-- ═══ EVIDENCE MATRIX ═══ -->
+<div class="section-hdr" id="evidence">
+  <div class="section-icon">🔬</div>
+  <h2>Evidence Matrix</h2>
+  <span class="cnt">27 GHOSTS · 7 TYPES</span>
+</div>
+<div class="matrix-wrap">
+<table class="matrix">
+<thead><tr><th>Ghost</th><th>EMF 5</th><th>Spirit Box</th><th>Writing</th><th>UV</th><th>Freezing</th><th>Orb</th><th>D.O.T.S</th></tr></thead>
+<tbody>
+<tr><td>Banshee</td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Dayan</td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Demon</td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td></tr>
+<tr><td>Deogen</td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Gallu</td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td></tr>
+<tr><td>Goryo</td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Hantu</td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Jinn</td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td></tr>
+<tr><td>Mare</td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Moroi</td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td></tr>
+<tr><td>Myling</td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td></tr>
+<tr><td>Obake</td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Obambo</td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Oni</td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Onryo</td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Phantom</td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Poltergeist</td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td></tr>
+<tr><td>Raiju</td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Revenant</td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td></tr>
+<tr><td>Shade</td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td></tr>
+<tr><td>Spirit</td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>Thaye</td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>The Mimic</td><td></td><td><span class="ev-dot"></span></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot orb-x"></span></td><td></td></tr>
+<tr><td>The Twins</td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td><span class="ev-dot"></span></td><td></td><td></td></tr>
+<tr><td>Wraith</td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Yokai</td><td></td><td><span class="ev-dot"></span></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td></tr>
+<tr><td>Yurei</td><td></td><td></td><td></td><td></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td><td><span class="ev-dot"></span></td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ═══ GHOST FIELD GUIDE ═══ -->
+<div class="section-hdr" id="ghosts">
+  <div class="section-icon">👻</div>
+  <h2>Ghost Field Guide</h2>
+  <span class="cnt">27 TYPES</span>
+</div>
+
+<div class="filter-bar">
+  <input type="text" id="ghostSearch" placeholder="Search ghosts..." oninput="filterGhosts()">
+  <button class="fb" data-ev="EMF 5" onclick="toggleFb(this)">EMF 5</button>
+  <button class="fb" data-ev="Spirit Box" onclick="toggleFb(this)">Spirit Box</button>
+  <button class="fb" data-ev="Ghost Writing" onclick="toggleFb(this)">Writing</button>
+  <button class="fb" data-ev="Ultraviolet" onclick="toggleFb(this)">UV</button>
+  <button class="fb" data-ev="Freezing" onclick="toggleFb(this)">Freezing</button>
+  <button class="fb" data-ev="Ghost Orb" onclick="toggleFb(this)">Orb</button>
+  <button class="fb" data-ev="D.O.T.S" onclick="toggleFb(this)">D.O.T.S</button>
+</div>
+
+<div class="ghost-grid" id="ghostGrid">
+
+<!-- BANSHEE -->
+<div class="ghost-card" data-name="banshee" data-ev="D.O.T.S,Ghost Orb,Ultraviolet">
+<div class="gc-hd"><div class="gc-name">Banshee</div><div class="gc-pills"><span class="ep e-dots">D.O.T.S</span><span class="ep e-orb">ORB</span><span class="ep e-uv">UV</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Targets a chosen player. Higher chance of singing events with distinctive parabolic wails.</p>
+<h4>Key Tools</h4><p>Parabolic Mic picks up Banshee-unique vocalizations.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Observe if ghost consistently pressures one player while ignoring others (multiplayer). Parabolic Mic sweeps for unique sounds.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Singing events happen for multiple ghosts — use Parabolic uniqueness, not just "it sang."</div>
+<h4>💡 Tip</h4><p>In solo play, target behavior is harder to confirm — lean on evidence and Parabolic Mic instead.</p>
+</div></div>
+
+<!-- DAYAN -->
+<div class="ghost-card" data-name="dayan" data-ev="EMF 5,Ghost Orb,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Dayan</div><div class="gc-pills"><span class="ep e-emf">EMF 5</span><span class="ep e-orb">ORB</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Hunt threshold/speed changes based on nearest player movement within 10m. Still = ~45% threshold, 1.2 m/s. Walking = ~65% threshold, 2.25 m/s.</p>
+<h4>Key Tools</h4><p>Salt (Tier III) buys time. Sanity Medication T3 gives 10s sprint boost for escaping the danger zone.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Keep one player still, another walking near ghost. Acceleration on movement + calm on stillness = Dayan.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Any ghost speeds up via LoS — Dayan's tell is specifically movement-state within 10m.</div>
+<h4>💡 Tip</h4><p>Use motion sensors to standardize the 10m distance — eyeballing it is unreliable.</p>
+</div></div>
+
+<!-- DEMON -->
+<div class="ghost-card" data-name="demon" data-ev="Ghost Writing,Ultraviolet,Freezing">
+<div class="gc-hd"><div class="gc-name">Demon</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-uv">UV</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Can rarely hunt at any sanity. Incense prevention only lasts 60s (vs 90s normal). Crucifix range is +50% larger (4.5/6/7.5m by tier).</p>
+<h4>Key Tools</h4><p>Crucifix is disproportionately valuable — place early and cover common hunt start points.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Incense timer discipline: if you cleanse and get a hunt again before the expected 90s, Demon rises sharply. Post-crucifix delay only 20s vs 25s.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Cursed hunts ignore incense prevention — don't attribute curse-chain hunts to Demon.</div>
+<h4>💡 Tip</h4><p>Track sanity with the truck monitor rather than guessing. Demon's "any sanity" hunts are rare, not constant.</p>
+</div></div>
+
+<!-- DEOGEN -->
+<div class="ghost-card" data-name="deogen" data-ev="D.O.T.S,Ghost Writing,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Deogen</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-writing">WRT</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Always knows where you are during hunts — hiding doesn't work. Very fast approach but becomes extremely slow up close.</p>
+<h4>How to Confirm</h4><div class="gc-tip">During a hunt, if it hard-tracks you but slows dramatically at close range, that's the Deogen signature.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Don't confuse with Moroi/Revenant speed spikes — Deogen's "slow close-range" is unique.</div>
+<h4>💡 Tip</h4><p>You CAN outrun a Deogen at close range — loop around furniture. The danger is the approach speed.</p>
+</div></div>
+
+<!-- GALLU -->
+<div class="ghost-card" data-name="gallu" data-ev="EMF 5,Ultraviolet,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Gallu</div><div class="gc-pills"><span class="ep e-emf">EMF 5</span><span class="ep e-uv">UV</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Becomes aggressive when protective equipment is used; calms after hunts. State-dependent salt behavior and crucifix range changes.</p>
+<h4>Key Tools</h4><p>Salt: enraged Gallus ignore salt (like Wraiths). Crucifix range: −2m enraged, +1m weakened. Incense forces state change.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Salt choke test + protection tool state changes. Wraith always ignores salt; Gallu only when enraged — use protection to trigger state and compare.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Salt avoidance can be pathing RNG — use doorway choke points with long Tier II/III lines.</div>
+<h4>💡 Tip</h4><p>Gallu punishes you for using safety tools carelessly. Plan your protection gear usage deliberately.</p>
+</div></div>
+
+<!-- GORYO -->
+<div class="ghost-card" data-name="goryo" data-ev="D.O.T.S,EMF 5,Ultraviolet">
+<div class="gc-hd"><div class="gc-name">Goryo</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-emf">EMF 5</span><span class="ep e-uv">UV</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>D.O.T.S only visible on camera when room is empty. Can't wander far or change favourite rooms.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Place D.O.T.S + camera, leave room entirely, watch from truck. D.O.T.S visible only on camera = strong Goryo signal.</div>
+<h4>Watch Out For</h4><div class="gc-warn">No Ghost Orbs — confirm room via temps/interaction clustering instead.</div>
+<h4>💡 Tip</h4><p>Use two D.O.T.S projectors opposite each other for maximum coverage, especially Tier III.</p>
+</div></div>
+
+<!-- HANTU -->
+<div class="ghost-card" data-name="hantu" data-ev="Ghost Orb,Ultraviolet,Freezing">
+<div class="gc-hd"><div class="gc-name">Hantu</div><div class="gc-pills"><span class="ep e-orb">ORB</span><span class="ep e-uv">UV</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Faster in cold during hunts, slower in warm. Shows freezing breath during hunts if fuse box off. Never turns fuse box on.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Observe speed differences by temperature zone. Track fuse box behavior as supporting signal.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Cold breath during hunts is a behavioral tell, NOT freezing evidence. Don't confuse them.</div>
+</div></div>
+
+<!-- JINN -->
+<div class="ghost-card" data-name="jinn" data-ev="EMF 5,Ultraviolet,Freezing">
+<div class="gc-hd"><div class="gc-name">Jinn</div><div class="gc-pills"><span class="ep e-emf">EMF 5</span><span class="ep e-uv">UV</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Faster in chase when breaker on. Can drain sanity. Can't use ability if breaker off. Never turns fuse box off.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Track breaker state + controlled chase observation. Monitor sanity for unexpected drains.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Teammates flipping the breaker invalidates the "never turns it off" test — coordinate roles.</div>
+<h4>💡 Tip</h4><p>Suspect Jinn? Keep breaker ON to bait the speed ability for confirmation, then turn it OFF to neuter it.</p>
+</div></div>
+
+<!-- MARE -->
+<div class="ghost-card" data-name="mare" data-ev="Ghost Writing,Ghost Orb,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Mare</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-orb">ORB</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>More likely to hunt in darkness. Turns lights off. Struggles to hunt with lights on.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Stabilize room lighting deliberately. Consistent dark-preference + hunt pressure in darkness = Mare.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Many ghosts flip lights — Mare's tell is a patterned preference, not a single flip.</div>
+<h4>💡 Tip</h4><p>Leave the ghost room lights ON to suppress Mare hunts while gathering evidence.</p>
+</div></div>
+
+<!-- MOROI -->
+<div class="ghost-card" data-name="moroi" data-ev="Ghost Writing,Freezing,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Moroi</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-freeze">FRZ</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Gets stronger at low sanity. Can curse via Spirit Box or paranormal sounds. Incense blind lasts 7s (vs 5s standard).</p>
+<h4>How to Confirm</h4><div class="gc-tip">Time incense blind during hunts. Unusually long blind = Moroi. Track sanity as primary variable.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Speed scaling can mimic LoS acceleration — break LoS repeatedly and compare across sanity bands.</div>
+<h4>💡 Tip</h4><p>Moroi punishes low sanity harder than any other ghost. Pop meds early and often.</p>
+</div></div>
+
+<!-- MYLING -->
+<div class="ghost-card" data-name="myling" data-ev="Ghost Writing,EMF 5,Ultraviolet">
+<div class="gc-hd"><div class="gc-name">Myling</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-emf">EMF 5</span><span class="ep e-uv">UV</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Quieter during hunts. More paranormal sounds on Parabolic Mic and Sound Recorder.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Compare footstep audibility distance during hunts. Parabolic Mic sweeps inside for increased frequency.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Environmental acoustics vary by floor — practice on the same map before calling Myling.</div>
+<h4>💡 Tip</h4><p>Myling hunts are sneaky — you'll hear the heartbeat before the footsteps. Extra caution on multi-floor maps.</p>
+</div></div>
+
+<!-- OBAKE -->
+<div class="ghost-card" data-name="obake" data-ev="EMF 5,Ghost Orb,Ultraviolet">
+<div class="gc-hd"><div class="gc-name">Obake</div><div class="gc-pills"><span class="ep e-emf">EMF 5</span><span class="ep e-orb">ORB</span><span class="ep e-uv">UV</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>25% chance to hide fingerprints. ~16.7% chance for unique UV patterns (six-finger handprint, double switch prints). Can halve remaining print duration.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Force UV checks after hunts. Look for unique patterns = instant confirm. Inconsistent UV = Obake tell.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Event interactions don't always leave prints — confirm with normal door touches.</div>
+<h4>💡 Tip</h4><p>If UV evidence feels inconsistent (sometimes there, sometimes not), that inconsistency IS the Obake tell.</p>
+</div></div>
+
+<!-- OBAMBO -->
+<div class="ghost-card" data-name="obambo" data-ev="Ghost Writing,Ultraviolet,D.O.T.S">
+<div class="gc-hd"><div class="gc-name">Obambo</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-uv">UV</span><span class="ep e-dots">DOTS</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Alternates unpredictably between calm and aggressive states. Aggressive = faster hunts, sooner threshold.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Gather evidence early. Track behavior "flips" between calm and aggressive without external triggers.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Many ghosts feel random without sanity tracking — use medication restore values to ground expectations.</div>
+</div></div>
+
+<!-- ONI -->
+<div class="ghost-card" data-name="oni" data-ev="D.O.T.S,EMF 5,Freezing">
+<div class="gc-hd"><div class="gc-name">Oni</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-emf">EMF 5</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Increased activity near players. More visible during hunts/events. Cannot do the "airball" ghost event.</p>
+<h4>How to Confirm</h4><div class="gc-tip">High-visibility manifestations + high activity near you = Oni. No airballs = supporting signal.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Don't miscall freezing based on breath/airball confusion. Airballs move toward players; breath doesn't.</div>
+<h4>💡 Tip</h4><p>Oni is one of the easier ghosts to visually confirm — it WANTS to be seen.</p>
+</div></div>
+
+<!-- ONRYO -->
+<div class="ghost-card" data-name="onryo" data-ev="Ghost Orb,Freezing,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Onryo</div><div class="gc-pills"><span class="ep e-orb">ORB</span><span class="ep e-freeze">FRZ</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Hunts after extinguishing flames. Nearby flames act like crucifix prevention. Bypasses firelight cooldowns.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Place multiple firelights. "Flame chain → immediate hunt" pattern = Onryo.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Other ghosts blow out firelights too — you need the hunt timing + flame correlation, not a single blowout.</div>
+<h4>💡 Tip</h4><p>Bring extra firelights — cheap ($15) and double as sanity protection + Onryo identification tool.</p>
+</div></div>
+
+<!-- PHANTOM -->
+<div class="ghost-card" data-name="phantom" data-ev="D.O.T.S,Ultraviolet,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Phantom</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-uv">UV</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Looking at it drains sanity faster. Taking its photo makes it disappear briefly; may not appear in the photo.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Photograph manifestations. "Disappears briefly + absent from photo" = Phantom.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Photo camera interference during hunts is normal — use the "disappears briefly" pattern, not just a scuffed photo.</div>
+<h4>💡 Tip</h4><p>Don't stare at manifestations if you suspect Phantom — your sanity will tank fast.</p>
+</div></div>
+
+<!-- POLTERGEIST -->
+<div class="ghost-card" data-name="poltergeist" data-ev="Ghost Writing,Ultraviolet,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Poltergeist</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-uv">UV</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Throws multiple objects at once. More aggressive throws. Weaker with no throwable items nearby.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Create clutter piles in ghost room. Multi-throw burst from one location = Poltergeist.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Twins create "multiple events" — check spatial distribution (same spot vs different areas).</div>
+</div></div>
+
+<!-- RAIJU -->
+<div class="ghost-card" data-name="raiju" data-ev="D.O.T.S,EMF 5,Ghost Orb">
+<div class="gc-hd"><div class="gc-name">Raiju</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-emf">EMF 5</span><span class="ep e-orb">ORB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Gains speed near active electronics. Disrupts electronics at 15m (vs 10m standard).</p>
+<h4>How to Confirm</h4><div class="gc-tip">Observe interference distance + behavior with multiple active electronics. Larger radius + speed scaling = Raiju.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Generic interference occurs for all ghosts — Raiju differentiates by larger radius and speed increase.</div>
+<h4>💡 Tip</h4><p>Suspect Raiju? Turn off unnecessary electronics during hunts. Use passive/placed tools over handheld.</p>
+</div></div>
+
+<!-- REVENANT -->
+<div class="ghost-card" data-name="revenant" data-ev="Ghost Writing,Ghost Orb,Freezing">
+<div class="gc-hd"><div class="gc-name">Revenant</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-orb">ORB</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Extremely fast when it detects a player. Very slow when undetected. The speed difference is dramatic and binary.</p>
+<h4>How to Confirm</h4><div class="gc-tip">In-hunt: get detected briefly, break LoS, observe the dramatic slowdown. The contrast is unmistakable.</div>
+<h4>Watch Out For</h4><div class="gc-warn">LoS acceleration is gradual for other ghosts — Revenant's is extreme and tied to detection state, not distance.</div>
+<h4>💡 Tip</h4><p>Hiding is THE counter. If a Revenant can't see you, it crawls. NEVER try to outrun one in the open.</p>
+</div></div>
+
+<!-- SHADE -->
+<div class="ghost-card" data-name="shade" data-ev="Ghost Writing,EMF 5,Freezing">
+<div class="gc-hd"><div class="gc-name">Shade</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-emf">EMF 5</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Less active near players. Cannot hunt if players are in the same room. The "shy ghost."</p>
+<h4>How to Confirm</h4><div class="gc-tip">Set up tools, leave room, monitor from truck. Activity spikes only when you leave = Shade.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Bad room identification makes any ghost seem inactive. Confirm room via temps and interaction clustering.</div>
+<h4>💡 Tip</h4><p>Shade is the safest ghost to investigate in-person — it literally won't hunt you in its own room.</p>
+</div></div>
+
+<!-- SPIRIT -->
+<div class="ghost-card" data-name="spirit" data-ev="Ghost Writing,EMF 5,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Spirit</div><div class="gc-pills"><span class="ep e-writing">WRT</span><span class="ep e-emf">EMF 5</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>No special strengths. Incense prevents hunts for 180s (vs 90s standard). The "vanilla" ghost.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Incense near ghost, time to next hunt. ~3 minute gap = Spirit. Often identified by elimination.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Cursed hunts ignore hunt suppression — don't use cursed-hunt timing for Spirit tests.</div>
+<h4>💡 Tip</h4><p>If nothing weird is happening, it might just be a Spirit.</p>
+</div></div>
+
+<!-- THAYE -->
+<div class="ghost-card" data-name="thaye" data-ev="D.O.T.S,Ghost Writing,Ghost Orb">
+<div class="gc-hd"><div class="gc-name">Thaye</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-writing">WRT</span><span class="ep e-orb">ORB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Ages over time — starts fast and aggressive, weakens as the contract progresses.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Compare early-game aggression/speed to later behavior. Consistent downtrend = Thaye.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Players naturally stabilize later (lights on, protection placed) — use objective speed/frequency measures.</div>
+<h4>💡 Tip</h4><p>Thaye is most dangerous in the first few minutes. Don't rush into the ghost room unprepared.</p>
+</div></div>
+
+<!-- THE MIMIC -->
+<div class="ghost-card" data-name="the mimic" data-ev="Ultraviolet,Freezing,Spirit Box,Ghost Orb">
+<div class="gc-hd"><div class="gc-name">The Mimic</div><div class="gc-pills"><span class="ep e-uv">UV</span><span class="ep e-freeze">FRZ</span><span class="ep e-sb">SB</span><span class="ep e-orb" style="opacity:.6">+ORB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Mimics other ghosts' abilities. ALWAYS shows Ghost Orbs as extra false evidence, even at 0-evidence settings.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Orbs + UV + Freezing + Spirit Box = strong Mimic signal. Orbs are the meta-tell even on reduced evidence.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Players forget Mimic orbs are EXTRA — "seeing Orbs" doesn't mean it's an Orb ghost, it might be Mimic.</div>
+<h4>💡 Tip</h4><p>The Mimic is the ultimate troll ghost. If behavior doesn't match any single ghost profile, think Mimic.</p>
+</div></div>
+
+<!-- THE TWINS -->
+<div class="ghost-card" data-name="the twins" data-ev="EMF 5,Freezing,Spirit Box">
+<div class="gc-hd"><div class="gc-name">The Twins</div><div class="gc-pills"><span class="ep e-emf">EMF 5</span><span class="ep e-freeze">FRZ</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Interactions in two places. "Two ghosts" feeling. Different hunt speeds across different hunts.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Use sensors for activity in separate rooms in quick succession. Hunt speed variance across hunts.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Poltergeist multi-throws feel like two sources — check spatial distribution of events.</div>
+<h4>💡 Tip</h4><p>Place motion sensors in adjacent rooms. Twins trigger sensors in different areas within seconds.</p>
+</div></div>
+
+<!-- WRAITH -->
+<div class="ghost-card" data-name="wraith" data-ev="D.O.T.S,EMF 5,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Wraith</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-emf">EMF 5</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Never leaves footprints. Never interacts with salt. The iconic salt-immunity ghost.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Salt choke points + motion sensor confirmation. Pristine salt despite confirmed passes = Wraith (or enraged Gallu).</div>
+<h4>Watch Out For</h4><div class="gc-warn">Pathing RNG can make any ghost miss salt — use long Tier II/III lines in tight doorways.</div>
+<h4>💡 Tip</h4><p>To separate Wraith from Gallu: Wraith's salt immunity is ALWAYS on. Gallu's is state-dependent.</p>
+</div></div>
+
+<!-- YOKAI -->
+<div class="ghost-card" data-name="yokai" data-ev="D.O.T.S,Ghost Orb,Spirit Box">
+<div class="gc-hd"><div class="gc-name">Yokai</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-orb">ORB</span><span class="ep e-sb">SB</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Talking near it raises hunt threshold. Reduced hearing during hunts (harder to find you by sound).</p>
+<h4>How to Confirm</h4><div class="gc-tip">Test talking effect near ghost room — if hunt pressure rises, Yokai leaning. Silent nearby survival during hunts = supporting.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Voice recognition auto-pings and Spirit Box can complicate talking tests.</div>
+<h4>💡 Tip</h4><p>SHUT UP near a Yokai. Seriously. Voice chat in the ghost room is how Yokais get early hunts.</p>
+</div></div>
+
+<!-- YUREI -->
+<div class="ghost-card" data-name="yurei" data-ev="D.O.T.S,Ghost Orb,Freezing">
+<div class="gc-hd"><div class="gc-name">Yurei</div><div class="gc-pills"><span class="ep e-dots">DOTS</span><span class="ep e-orb">ORB</span><span class="ep e-freeze">FRZ</span></div></div>
+<div class="gc-body">
+<h4>Behavior & Unique Ability</h4><p>Can drain sanity. Signature door slam. Incense traps it in its room for 90s and prevents roaming.</p>
+<h4>How to Confirm</h4><div class="gc-tip">Incense ghost room, observe if wandering stops for ~90s. Repeated strong door events via camera.</div>
+<h4>Watch Out For</h4><div class="gc-warn">Door interactions are common — rely on repeated events + incense trap behavior, not one slam.</div>
+<h4>💡 Tip</h4><p>Yurei is one of the best ghosts to incense-trap. Lock it down, then gather evidence in peace.</p>
+</div></div>
+
+</div><!-- /ghost-grid -->
+
+<!-- ═══ EQUIPMENT ═══ -->
+<div class="section-hdr" id="equipment">
+  <div class="section-icon">🔦</div>
+  <h2>Detective Toolkit</h2>
+  <span class="cnt">21 TOOLS</span>
+</div>
+
+<div class="eq-list">
+<div class="eq-item"><div class="eq-top"><span class="eq-name">EMF Reader</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$45</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 1.7/2/3.5m by tier. For EMF-evidence ghosts, EMF 2–3 events have 33% chance to show as EMF 5. Keep OFF during hunts — active electronics attract ghosts within 7.5m.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Spirit Box</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$50</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 3/4/5m. Room lights must be OFF (including lamps). Auto-ping every 10s in some modes. Electronic — attracts ghost during hunts.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Ghost Writing Book</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$40</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 3/4/5m. Writing creates EMF 2 (33% EMF 5 if applicable). Non-writing ghosts can throw the book — thrown ≠ writing evidence.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">UV Light</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$35</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Prints last 2 min (1 min Insanity). Tier II is a glowstick — NOT electronic, hunt-safe. Obake hides prints 25%.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Thermometer</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$30</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Freezing below 1°C (below 0°C safer on Tier I due to ±3°C fluctuation). T1 passive/non-electronic. Update: ~0.33°C/s (T1), 2.5s (T2), 1.5s (T3). Cold breath is NOT evidence.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Video Camera</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$50</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Night vision for Ghost Orbs (spawn in favourite room). Orbs hide under bright lights — check with lights off. Higher tiers reduce interference.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">D.O.T.S Projector</span><span class="eq-cat c-evidence">EVIDENCE</span><span class="eq-cost">$65</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range: 5m cone (T1) / 2.5m area (T2) / 7m scan (T3, pausable). Only T1 held & active attracts ghost in hunts. Use camera night vision for better visibility.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Crucifix</span><span class="eq-cat c-protect">PROTECTION</span><span class="eq-cost">$30</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 3/4/5m. Blocks hunt initiation. 25s cooldown after block (Demon 20s). Range ignores walls. Demon gets +50% range. Gallu range varies by state.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Incense</span><span class="eq-cat c-protect">PROTECTION</span><span class="eq-cost">$15</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Range 3/4/5m. Burn 5/6/7s. No-hunt: 90s standard, Spirit 180s, Demon 60s. Hunt-blind: 5s (Moroi 7s). T2 slows ghost 50%, T3 stops movement. Doesn't work on stairs for cleansing.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Salt</span><span class="eq-cat c-protect">PROTECTION</span><span class="eq-cost">$15</span><span class="eq-max">Max 3</span></div><div class="eq-notes">Uses 2/3/3 per container. T3 slows ghost 50% for 2s in hunts; outside hunts causes brief turn-around. Wraiths & enraged Gallus ignore salt entirely. UV reveals footprints briefly.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Firelight</span><span class="eq-cat c-protect">PROTECTION</span><span class="eq-cost">$15</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Duration 5/10/contract min. Sanity drain reduction 33/50/66%. 2m range for sanity effect. Blowout chance 66.67% within ~5m. Onryo bypasses cooldowns.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Sanity Medication</span><span class="eq-cat c-protect">PROTECTION</span><span class="eq-cost">$20</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Restore: 40/35/30/25/20% by difficulty (Amateur→Insanity). Speed: 20/10/10s. Tier III grants 10s sprint boost. Can't use above 95% sanity.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Igniter</span><span class="eq-cat c-util">UTILITY</span><span class="eq-cost">$10</span><span class="eq-max">Max 4</span></div><div class="eq-notes">T1 matches (10 uses, 10s each). T2 lighter (5 min). T3 zippo (10 min, waterproof). Lights incense, firelights, summoning circles.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Parabolic Mic</span><span class="eq-cat c-track">TRACKING</span><span class="eq-cost">$50</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 20/30/30m, ~110° angle. T3 detects one floor above/below. Must be used inside. Banshee unique sounds. Moroi curse trigger. Myling frequency increase.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Sound Sensor</span><span class="eq-cat c-track">TRACKING</span><span class="eq-cost">$80</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Radius 5m default, expandable to 10/15m. Truck monitor mapping. Doesn't detect voice chat or some equipment sounds.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Motion Sensor</span><span class="eq-cat c-track">TRACKING</span><span class="eq-cost">$100</span><span class="eq-max">Max 4</span></div><div class="eq-notes">T3: 1.5m sphere, ghost-only trigger. T1/T2 use beam/cone logic. Map indication for tracking movement patterns.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Sound Recorder</span><span class="eq-cat c-media">MEDIA</span><span class="eq-cost">$30</span><span class="eq-max">Max 2</span></div><div class="eq-notes">Range 3/5/5m. Stores 3 clips per contract. Captures Spirit Box responses, writing, EMF sounds. Moroi curse interaction.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Photo Camera</span><span class="eq-cat c-media">MEDIA</span><span class="eq-cost">$40</span><span class="eq-max">Max 3</span></div><div class="eq-notes">Cooldown 3/2/1s by tier. First 5 photos count for rewards (duplicates = less). T2/T3 active cameras attract ghost 7.5m in hunts (Yokai 2.5m). T1 only attracts when snapping.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Flashlight</span><span class="eq-cat c-util">UTILITY</span><span class="eq-cost">$30</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Intensity low/med/high. T3 wide spotlight. Can be shoulder-mounted — toggle via Special key.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Head Gear</span><span class="eq-cat c-util">UTILITY</span><span class="eq-cost">$60</span><span class="eq-max">Max 4</span></div><div class="eq-notes">T1: head camera feed. T2: head-mounted light. T3: night vision goggles with distortion near active ghost.</div></div>
+<div class="eq-item"><div class="eq-top"><span class="eq-name">Tripod</span><span class="eq-cat c-util">UTILITY</span><span class="eq-cost">$25</span><span class="eq-max">Max 4</span></div><div class="eq-notes">Stability low/med/high. T2/T3 support rotation control (T2 has truck-side rotation while viewing). Knockdown chance: T1 30%, T2 20%.</div></div>
+</div>
+
+<!-- ═══ PRO TIPS ═══ -->
+<div class="section-hdr" id="tips">
+  <div class="section-icon">💡</div>
+  <h2>Pro Tips & Tricks</h2>
+</div>
+<div class="tips-grid">
+<div class="tip-card"><h4>Electronics Kill</h4><p>Active electronics within 7.5m attract the ghost during hunts. Turn everything off when hiding. Yokai only has 2.5m photo camera attraction.</p></div>
+<div class="tip-card"><h4>EMF 5 = 33% Chance</h4><p>Each EMF 2–3 event only has 33% chance to show EMF 5 for evidence ghosts. Check interactions fast and often — don't rule it out early.</p></div>
+<div class="tip-card"><h4>Freezing Threshold</h4><p>Non-freezing ghosts bottom out at ~1°C. Freezing ghosts reach −10°C. Confirm only below 1°C. Tier I: wait for below 0°C due to ±3°C fluctuation.</p></div>
+<div class="tip-card"><h4>The Mimic's Orb Trick</h4><p>Mimic ALWAYS shows Ghost Orbs as extra false evidence, even at 0 evidence settings. Orbs + SB + Freezing + UV = strongly suspect Mimic.</p></div>
+<div class="tip-card"><h4>Incense Timing</h4><p>Standard no-hunt: 90s. Spirit: 180s. Demon: 60s. Time your incense — this is one of the most reliable behavioral confirms in the game.</p></div>
+<div class="tip-card"><h4>Salt Strategy</h4><p>Don't scatter randomly. Create unavoidable lines in doorways with Tier II/III. Confirm traversal with motion sensors. Pristine salt = Wraith or enraged Gallu.</p></div>
+<div class="tip-card"><h4>UV Print Window</h4><p>Prints last 2 min (1 min Insanity). After hunts, immediately scan all doors and switches — hunts create many door touches. Speed is critical.</p></div>
+<div class="tip-card"><h4>D.O.T.S Camera Trick</h4><p>Goryo only shows D.O.T.S on camera, not in-person. Always set up video camera watching projector and check from truck. Night vision helps dramatically.</p></div>
+<div class="tip-card"><h4>Sanity Math</h4><p>Know med restore by difficulty (40/35/30/25/20%). Track via truck monitor. Lets you determine if hunts are "early" — key for Demon, Shade, Yokai identification.</p></div>
+<div class="tip-card"><h4>Cursed Hollow 2026</h4><p>Event runs through Apr 21. Lucky Forest Minions decrease ghost speed 10% (stackable!). Need minimum x1.00 difficulty for event points.</p></div>
+<div class="tip-card"><h4>Room First, Always</h4><p>CONFIRM favourite room before behavioral tests. Use temp decay + interaction clustering. Bad room ID invalidates everything. Orbs spawn in favourite room.</p></div>
+<div class="tip-card"><h4>Hiding 101</h4><p>Break LoS, turn off electronics, stop talking (especially vs Yokai). Revenant crawls if it can't see you. Deogen always knows — loop furniture instead of hiding.</p></div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="footer">
+  <p>☠ Stay alive out there, Ghost Hunter ☠</p>
+  <p style="margin-top:8px;font-family:'Fira Code',monospace;font-size:8px;">v0.16.1.0 Cursed Hollow · Data from Kinetic Games patch notes & Phasmophobia Wiki</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT — Lightweight interactivity only
+     (all content is already in the HTML above)
+     ═══════════════════════════════════════════════ -->
+<script>
+// ── JOURNAL: Evidence Elimination ──
+function cycleEv(el) {
+  const states = ['none','confirmed','ruled-out'];
+  const cur = states.indexOf(el.dataset.state);
+  el.dataset.state = states[(cur + 1) % 3];
+  updateJournal();
+}
+
+function resetJournal() {
+  document.querySelectorAll('.ev-sel').forEach(el => el.dataset.state = 'none');
+  updateJournal();
+}
+
+function updateJournal() {
+  const confirmed = [], ruledOut = [];
+  document.querySelectorAll('.ev-sel').forEach(el => {
+    if (el.dataset.state === 'confirmed') confirmed.push(el.dataset.ev);
+    if (el.dataset.state === 'ruled-out') ruledOut.push(el.dataset.ev);
+  });
+
+  let matchCount = 0;
+  document.querySelectorAll('.jg').forEach(row => {
+    const ghostEvs = row.dataset.evidence.split(',');
+    const extraEv = row.dataset.extra ? row.dataset.extra.split(',') : [];
+    const allEvs = [...ghostEvs, ...extraEv];
+
+    // Ghost is eliminated if:
+    // 1. A confirmed evidence is NOT in its set
+    // 2. A ruled-out evidence IS in its set
+    const hasAllConfirmed = confirmed.every(c => allEvs.includes(c));
+    const hasNoRuledOut = ruledOut.every(r => !ghostEvs.includes(r));
+    // Special: Mimic's extra orb — if Ghost Orb is ruled out but it's Mimic's extra, still check
+    const isMimic = row.querySelector('.jg-name').textContent === 'The Mimic';
+
+    let alive;
+    if (isMimic) {
+      // For Mimic, orbs are extra — ruling out Ghost Orb doesn't eliminate Mimic
+      // But confirmed Ghost Orb doesn't help narrow TO Mimic either (it's bonus)
+      const hasConfNoOrb = confirmed.filter(c => c !== 'Ghost Orb').every(c => ghostEvs.includes(c));
+      const hasRuledNoOrb = ruledOut.filter(r => r !== 'Ghost Orb').every(r => !ghostEvs.includes(r));
+      // If Ghost Orb is confirmed, Mimic is still possible (it always shows orbs)
+      alive = hasConfNoOrb && hasRuledNoOrb;
+      if (confirmed.includes('Ghost Orb')) alive = alive; // orbs don't eliminate mimic
+    } else {
+      alive = hasAllConfirmed && hasNoRuledOut;
+    }
+
+    if (alive) {
+      row.classList.remove('eliminated');
+      row.classList.add('match');
+      matchCount++;
+    } else {
+      row.classList.add('eliminated');
+      row.classList.remove('match');
+    }
+
+    // Highlight matching evidence pills
+    row.querySelectorAll('.jg-ev').forEach(pill => {
+      pill.classList.remove('ev-match','ev-miss');
+    });
+    if (confirmed.length || ruledOut.length) {
+      const evLabels = {'EMF 5':'EMF5','Spirit Box':'SB','Ghost Writing':'WRT',
+                        'Ultraviolet':'UV','Freezing':'FRZ','Ghost Orb':'ORB','D.O.T.S':'DOTS'};
+      row.querySelectorAll('.jg-ev').forEach(pill => {
+        const pText = pill.textContent.trim();
+        const isConfirmedPill = confirmed.some(c => evLabels[c] === pText);
+        if (isConfirmedPill) pill.classList.add('ev-match');
+      });
+    }
+  });
+
+  document.getElementById('jrCount').textContent = `${matchCount} / 27 possible`;
+}
+
+// ── GHOST CARD FILTER ──
+let activeFilters = [];
+function toggleFb(btn) {
+  const ev = btn.dataset.ev;
+  if (activeFilters.includes(ev)) {
+    activeFilters = activeFilters.filter(e => e !== ev);
+    btn.classList.remove('active');
+  } else {
+    activeFilters.push(ev);
+    btn.classList.add('active');
+  }
+  filterGhosts();
+}
+
+function filterGhosts() {
+  const search = (document.getElementById('ghostSearch').value || '').toLowerCase();
+  document.querySelectorAll('.ghost-card').forEach(card => {
+    const name = card.dataset.name;
+    const evs = card.dataset.ev;
+    const text = card.textContent.toLowerCase();
+    const matchSearch = !search || text.includes(search);
+    const matchEvs = activeFilters.length === 0 || activeFilters.every(f => evs.includes(f));
+    card.style.display = (matchSearch && matchEvs) ? '' : 'none';
+  });
+}
+
+// ── NAV HIGHLIGHT ──
+const sections = ['event','journal','difficulty','evidence','ghosts','equipment','tips'];
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 120) current = id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, {passive: true});
+</script>
+</body>
+</html>
